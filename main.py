@@ -42,7 +42,7 @@ if __name__ == "__main__":
         list_unwatched()
     elif command == "-listwatched":
         list_watched()
-    elif command == "-help":
+    elif command == "help":
         show_help()
     else:
         print(f"Error: Unknown command '{command}'")
