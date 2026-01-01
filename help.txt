@@ -1,0 +1,7 @@
+Usage: python main.py [COMMAND]
+    
+Commands:
+    -random          Select a random movie")
+    -listunwatched   List all unwatched movies")
+    -listwatched     List all watched movies")
+    -help            Show this help message")
