@@ -1,0 +1,38 @@
+# -------------------------------
+# Python environment / caches
+# -------------------------------
+
+# Virtual environment
+.venv/
+
+# Python cache folders
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python egg / distribution files
+*.egg
+*.egg-info/
+dist/
+build/
+
+# -------------------------------
+# Temporary files / editor files
+# -------------------------------
+
+unit-test-ignored.py
+
+# Your custom temp folder
+files-to-ignore/
+
+# OS-specific temp files
+.DS_Store        # Linux/MacOS
+#Thumbs.db        # Windows
+
+# Editor backup files
+*~
+*.swp
+*.swo
+*.tmp
+*.log

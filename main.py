@@ -6,6 +6,8 @@ STATUS_UNWATCHED = 0
 STATUS_SKIPPED = 1
 STATUS_WATCHED = 2
 
+# Participants
+VOTERS = ['Aikosh', 'Mo']
 
 def get_connection(db_path="pm.db"):
     """Create and return SQLite connection."""
@@ -15,8 +17,8 @@ def get_connection(db_path="pm.db"):
 
 
 def select_random(cursor):
-    """Return a random unwatched movie or None.
-    """
+    """Return a random unwatched movie or None."""
+
     cursor.execute("""
         SELECT *
         FROM films
@@ -55,8 +57,53 @@ def show_help():
     with open('help.txt', 'r', encoding="utf-8") as file:
         print(file.read())
 
-def vote_on_movie():
-    pass
+def vote_on_movie(cursor):
+    """Handle random movie selection and voting loop."""
+    while True:
+        movie_for_vote = select_random(cursor)
+        #handle empty unwatched movies:
+        if movie_for_vote is None:
+            print("You've cleared all the movies!")
+            print("Time to update your database file.")
+            break
+        print(f"Tonight's choice is {movie_for_vote['title']} ({movie_for_vote['year']})")
+        print("Now it's time to vote!")
+
+        ballot_box = {}
+        for voter in VOTERS:
+            while True:
+                voter_response = input(f"{voter}, do you want to watch {movie_for_vote['title']} ({movie_for_vote['year']})? Type Y/N: ").lower() 
+                if voter_response == 'y':
+                    ballot_box[voter] = True
+                    break
+                elif voter_response == 'n':
+                    ballot_box[voter] = False
+                    break
+                else:
+                    print("Invalid response! Please enter Y/N.")
+
+        print(ballot_box)
+
+        if any(ballot_box.values()):
+            # At least one vote is yes
+            print(f"{movie_for_vote['title']} ({movie_for_vote['year']}) was selected.")
+            print("It will be marked as Watched automatically.")
+            break  # Exit the loop since the movie was accepted
+        else:
+            # All votes are no
+            print(f"{movie_for_vote['title']} ({movie_for_vote['year']}) was REJECTED.")
+            print("It will be marked as Skipped automatically.")
+
+            while True:
+                another_round = input("Do you want to try finding another random movie? (Y/N) ").lower()
+                if another_round == 'y':
+                    break  # Loop will continue and pick a new movie
+                elif another_round == 'n':
+                    print("Good bye!")
+                    return  # Exit the function
+                else:
+                    print("Invalid response. Answer with Y/N.")
+
 
 # Main program - handle command-line arguments
 if __name__ == "__main__":
@@ -71,16 +118,8 @@ if __name__ == "__main__":
 
     try:
         if command == "randommovie":
-            movie = select_random(cursor)
+            vote_on_movie(cursor)
 
-            if movie is None: # for when you run out of movies
-                print("""
-You've watched all the movies!
-Update your database with new movies for future date nights.
-""")
-            else:
-                print(f"Tonight's choice is {movie['title']} ({movie['year']})")
-                print("Now vote on it:")
 
         elif command == "listunwatched":
             unwatched_movies = list_unwatched(cursor)
