@@ -15,6 +15,14 @@ def get_connection(db_path="pm.db"):
     conn.row_factory = sqlite3.Row # you can then call random_movie['title']
     return conn
 
+def update_movie_status(cursor, movie_id, status):
+    """Updates movie status."""
+    cursor.execute("""
+        UPDATE films
+        SET status = ?
+        WHERE id = ?;
+    """, (status, movie_id))
+
 
 def select_random(cursor):
     """Return a random unwatched movie or None."""
@@ -57,7 +65,7 @@ def show_help():
     with open('help.txt', 'r', encoding="utf-8") as file:
         print(file.read())
 
-def vote_on_movie(cursor):
+def vote_on_movie(cursor, conn):
     """Handle random movie selection and voting loop."""
     while True:
         movie_for_vote = select_random(cursor)
@@ -88,11 +96,15 @@ def vote_on_movie(cursor):
             # At least one vote is yes
             print(f"{movie_for_vote['title']} ({movie_for_vote['year']}) was selected.")
             print("It will be marked as Watched automatically.")
+            update_movie_status(cursor, movie_for_vote['id'], STATUS_WATCHED)
+            conn.commit()
             break  # Exit the loop since the movie was accepted
         else:
             # All votes are no
             print(f"{movie_for_vote['title']} ({movie_for_vote['year']}) was REJECTED.")
             print("It will be marked as Skipped automatically.")
+            update_movie_status(cursor, movie_for_vote['id'], STATUS_SKIPPED)
+            conn.commit()
 
             while True:
                 another_round = input("Do you want to try finding another random movie? (Y/N) ").lower()
@@ -118,7 +130,7 @@ if __name__ == "__main__":
 
     try:
         if command == "randommovie":
-            vote_on_movie(cursor)
+            vote_on_movie(cursor, conn)
 
 
         elif command == "listunwatched":
