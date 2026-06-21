@@ -1,7 +1,13 @@
-Usage: python main.py [COMMAND]
-    
+Usage: python main.py COMMAND
+
 Commands:
-    randommovie          Select a random movie")
-    listunwatched   List all unwatched movies")
-    listwatched     List all watched movies")
-    --help            Show this help message")
+    randommovie     Select a random movie and vote
+    listunwatched   List all unwatched movies
+    listwatched     List all watched movies
+
+Options:
+    -h, --help      Show this help message
+
+First run:
+    randommovie asks for two voter names and saves them for future sessions.
+    Individual votes are not saved; only the resulting movie status is stored.

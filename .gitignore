@@ -36,3 +36,6 @@ files-to-ignore/
 *.swo
 *.tmp
 *.log
+
+# Local runtime database
+pm.db
