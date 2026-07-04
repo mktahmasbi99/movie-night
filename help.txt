@@ -1,4 +1,4 @@
-Usage: python movie-night.py COMMAND
+Usage: python movie_night.py COMMAND
 
 Commands:
     randommovie     Select a random movie and vote

@@ -9,17 +9,17 @@ from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
-import main
+import movie_night
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
-MAIN_PATH = PROJECT_DIR / "movie-night.py"
+MAIN_PATH = PROJECT_DIR / "movie_night.py"
 
 
 def create_test_connection():
     connection = sqlite3.connect(":memory:")
     connection.row_factory = sqlite3.Row
-    main.ensure_films_table(connection)
+    movie_night.ensure_films_table(connection)
     return connection
 
 
@@ -37,36 +37,36 @@ class VotingTests(unittest.TestCase):
     def test_one_yes_vote_selects_movie(self):
         cursor = self.connection.cursor()
         with patch("builtins.input", side_effect=["y", "n"]), redirect_stdout(StringIO()):
-            main.vote_on_movie(cursor, self.connection, ["Alice", "Bob"])
+            movie_night.vote_on_movie(cursor, self.connection, ["Alice", "Bob"])
         status = self.connection.execute("SELECT status FROM films WHERE id = 1").fetchone()[0]
-        self.assertEqual(main.STATUS_WATCHED, status)
+        self.assertEqual(movie_night.STATUS_WATCHED, status)
 
     def test_second_yes_vote_selects_movie(self):
         cursor = self.connection.cursor()
         with patch("builtins.input", side_effect=["n", "y"]), redirect_stdout(StringIO()):
-            main.vote_on_movie(cursor, self.connection, ["Alice", "Bob"])
+            movie_night.vote_on_movie(cursor, self.connection, ["Alice", "Bob"])
         status = self.connection.execute("SELECT status FROM films WHERE id = 1").fetchone()[0]
-        self.assertEqual(main.STATUS_WATCHED, status)
+        self.assertEqual(movie_night.STATUS_WATCHED, status)
 
     def test_all_no_votes_skip_movie(self):
         cursor = self.connection.cursor()
         with patch("builtins.input", side_effect=["n", "n", "n"]), redirect_stdout(StringIO()):
-            main.vote_on_movie(cursor, self.connection, ["Alice", "Bob"])
+            movie_night.vote_on_movie(cursor, self.connection, ["Alice", "Bob"])
         status = self.connection.execute("SELECT status FROM films WHERE id = 1").fetchone()[0]
-        self.assertEqual(main.STATUS_SKIPPED, status)
+        self.assertEqual(movie_night.STATUS_SKIPPED, status)
 
     def test_invalid_vote_is_reprompted(self):
         cursor = self.connection.cursor()
         output = StringIO()
         with patch("builtins.input", side_effect=["invalid", "y", "n"]), redirect_stdout(output):
-            main.vote_on_movie(cursor, self.connection, ["Alice", "Bob"])
+            movie_night.vote_on_movie(cursor, self.connection, ["Alice", "Bob"])
         self.assertIn("Invalid response", output.getvalue())
 
     def test_empty_collection_exits_cleanly(self):
         self.connection.execute("DELETE FROM films")
         output = StringIO()
         with redirect_stdout(output):
-            main.vote_on_movie(self.connection.cursor(), self.connection, ["Alice", "Bob"])
+            movie_night.vote_on_movie(self.connection.cursor(), self.connection, ["Alice", "Bob"])
         self.assertIn("cleared all the movies", output.getvalue())
 
 
@@ -80,14 +80,14 @@ class VoterSetupTests(unittest.TestCase):
     def test_first_run_prompts_and_persists_names(self):
         output = StringIO()
         with patch("builtins.input", side_effect=["Alice", "Bob"]), redirect_stdout(output):
-            voters = main.get_or_create_voters(self.connection)
+            voters = movie_night.get_or_create_voters(self.connection)
 
         self.assertEqual(["Alice", "Bob"], voters)
-        self.assertEqual(["Alice", "Bob"], main.load_voters(self.connection))
+        self.assertEqual(["Alice", "Bob"], movie_night.load_voters(self.connection))
         self.assertIn("Voters saved: Alice and Bob", output.getvalue())
 
     def test_saved_names_are_reused_without_prompting(self):
-        main.ensure_voters_table(self.connection)
+        movie_night.ensure_voters_table(self.connection)
         self.connection.executemany(
             "INSERT INTO voters (position, name) VALUES (?, ?)",
             ((1, "Alice"), (2, "Bob")),
@@ -95,7 +95,7 @@ class VoterSetupTests(unittest.TestCase):
         self.connection.commit()
 
         with patch("builtins.input") as mocked_input:
-            voters = main.get_or_create_voters(self.connection)
+            voters = movie_night.get_or_create_voters(self.connection)
 
         mocked_input.assert_not_called()
         self.assertEqual(["Alice", "Bob"], voters)
@@ -105,7 +105,7 @@ class VoterSetupTests(unittest.TestCase):
         with patch(
             "builtins.input", side_effect=["", "Alice", "alice", "Bob"]
         ), redirect_stdout(output):
-            voters = main.get_or_create_voters(self.connection)
+            voters = movie_night.get_or_create_voters(self.connection)
 
         self.assertEqual(["Alice", "Bob"], voters)
         self.assertIn("Name cannot be empty", output.getvalue())
@@ -113,7 +113,7 @@ class VoterSetupTests(unittest.TestCase):
 
     def test_database_stores_names_but_no_individual_votes(self):
         with patch("builtins.input", side_effect=["Alice", "Bob"]), redirect_stdout(StringIO()):
-            main.get_or_create_voters(self.connection)
+            movie_night.get_or_create_voters(self.connection)
 
         tables = {
             row[0]
@@ -133,7 +133,7 @@ class SeedDatabaseTests(unittest.TestCase):
     def test_seed_csv_can_create_database(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             database_path = Path(temporary_directory) / "pm.db"
-            movie_count = main.create_database_from_csv(
+            movie_count = movie_night.create_database_from_csv(
                 database_path, PROJECT_DIR / "data" / "seed-movies.csv"
             )
             connection = sqlite3.connect(database_path)
@@ -155,7 +155,7 @@ class SeedDatabaseTests(unittest.TestCase):
             database_path = Path(temporary_directory) / "pm.db"
             output = StringIO()
             with patch("builtins.input", side_effect=["y"]), redirect_stdout(output):
-                result = main.main(["listunwatched"], db_path=database_path)
+                result = movie_night.main(["listunwatched"], db_path=database_path)
 
         self.assertEqual(0, result)
         self.assertIn("Created pm.db with 365 movies", output.getvalue())
@@ -166,7 +166,7 @@ class SeedDatabaseTests(unittest.TestCase):
             database_path = Path(temporary_directory) / "pm.db"
             output = StringIO()
             with patch("builtins.input", side_effect=["n"]), redirect_stdout(output):
-                result = main.main(["listunwatched"], db_path=database_path)
+                result = movie_night.main(["listunwatched"], db_path=database_path)
 
         self.assertEqual(1, result)
         self.assertIn("Database setup skipped", output.getvalue())
@@ -176,7 +176,9 @@ class DatabaseConstraintTests(unittest.TestCase):
     def setUp(self):
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.database_path = Path(self.temporary_directory.name) / "pm.db"
-        main.create_database_from_csv(self.database_path, PROJECT_DIR / "data" / "seed-movies.csv")
+        movie_night.create_database_from_csv(
+            self.database_path, PROJECT_DIR / "data" / "seed-movies.csv"
+        )
         self.connection = sqlite3.connect(self.database_path)
 
     def tearDown(self):

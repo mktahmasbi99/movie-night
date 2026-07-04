@@ -9,10 +9,10 @@ A two-person command-line program that selects a random unwatched movie, collect
 From the project directory:
 
 ```bash
-.venv/bin/python movie-night.py --help
-.venv/bin/python movie-night.py randommovie
-.venv/bin/python movie-night.py listunwatched
-.venv/bin/python movie-night.py listwatched
+.venv/bin/python movie_night.py --help
+.venv/bin/python movie_night.py randommovie
+.venv/bin/python movie_night.py listunwatched
+.venv/bin/python movie_night.py listwatched
 ```
 
 ## First-time database setup
