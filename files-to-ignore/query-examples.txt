@@ -1,8 +1,0 @@
--- Check if the movie exists
-SELECT * FROM films WHERE title = 'Three Days of the Condor';
-
--- Add a new movie if not present
-INSERT INTO films (title, year) VALUES ('Three Days of the Condor', 1975);
-
--- Verify it was added
-SELECT * FROM films WHERE title = 'Three Days of the Condor';
