@@ -1,0 +1,366 @@
+id,title,year,director
+1,Trip to the Moon,1902,Georges Méliès
+2,The Great Train Robbery,1903,Edwin Stanton Porter
+3,The Cameraman's Revenge,1912,Ladislas Starevich
+4,Cabiria,1914,Giovanni Pastrone
+5,The Birth of a Nation,1915,D. W. Griffith
+6,Intolerance,1916,D. W. Griffith
+7,The Immigrant,1917,Charlie Chaplin
+8,Broken Blossoms,1919,D. W. Griffith
+9,The Cabinet of Dr. Caligari,1920,Robert Wiene
+10,The Kid,1921,Charlie Chaplin
+11,Nanook of the North,1922,Robert J. Flaherty
+12,Nosferatu,1922,F. W. Murnau
+13,Safety Last!,1923,Fred C. Newmeyer; Sam Taylor
+14,Sherlock Jr.,1924,Buster Keaton
+15,The Last Laugh,1924,F. W. Murnau
+16,The Gold Rush,1925,Charlie Chaplin
+17,Battleship Potemkin,1925,Sergei Eisenstein
+18,The General,1926,Buster Keaton; Clyde Bruckman
+19,Metropolis,1927,Fritz Lang
+20,Sunrise: A Song of Two Humans,1927,F. W. Murnau
+21,The Jazz Singer,1927,Alan Crosland
+22,The Passion of Joan of Arc,1928,Carl Theodor Dreyer
+23,"Steamboat Bill, Jr.",1928,Charles Reisner
+24,Un Chien Andalou,1929,Luis Buñuel
+25,Man with a Movie Camera,1929,Dziga Vertov
+26,All Quiet on the Western Front,1930,Lewis Milestone
+27,City Lights,1931,Charlie Chaplin
+28,M,1931,Fritz Lang
+29,Frankenstein,1931,James Whale
+30,Scarface,1932,Howard Hawks; Richard Rosson
+31,Freaks,1932,Tod Browning
+32,Duck Soup,1933,Leo McCarey
+33,King Kong,1933,Ernest B. Schoedsack; Merian C. Cooper
+34,It Happened One Night,1934,Frank Capra
+35,The Thin Man,1934,W. S. Van Dyke
+36,The 39 Steps,1935,Alfred Hitchcock
+37,The Bride of Frankenstein,1935,James Whale
+38,Modern Times,1936,Charlie Chaplin
+39,My Man Godfrey,1936,Gregory La Cava
+40,Swing Time,1936,George Stevens
+41,Snow White and the Seven Dwarfs,1937,Ben Sharpsteen; David Hand; Larry Morey; Percival C. Pearce; Wilfred Jackson; William Cottrell
+42,La Grande Illusion,1937,Jean Renoir
+43,The Awful Truth,1937,Leo McCarey
+44,Bringing Up Baby,1938,Howard Hawks
+45,The Adventures of Robin Hood,1938,Michael Curtiz; William Keighley
+46,The Lady Vanishes,1938,Alfred Hitchcock
+47,Stagecoach,1939,John Ford
+48,The Wizard of Oz,1939,King Vidor; Victor Fleming
+49,Gone with the Wind,1939,George Cukor; Sam Wood; Victor Fleming
+50,The Rules of the Game,1939,Jean Renoir
+51,Rebecca,1940,Alfred Hitchcock
+52,The Great Dictator,1940,Charlie Chaplin
+53,Pinocchio,1940,Ben Sharpsteen; Bill Roberts; Hamilton Luske; Jack Kinney; Norm Ferguson; T. Hee; Wilfred Jackson
+54,Fantasia,1940,Ben Sharpsteen; Bill Roberts; Ford Beebe; Ford Beebe Jr.; Hamilton Luske; James Algar; Jim Handley; Norm Ferguson; Paul Satterfield; Samuel Armstrong; T. Hee; Wilfred Jackson
+55,The Grapes of Wrath,1940,John Ford
+56,Citizen Kane,1941,Orson Welles
+57,The Maltese Falcon,1941,John Huston
+58,Sergeant York,1941,Howard Hawks
+59,Casablanca,1942,Michael Curtiz
+60,To Be or Not to Be,1942,Ernst Lubitsch
+61,Bambi,1942,Bill Roberts; David Hand; Graham Heid; James Algar; Norman Wright; Paul Satterfield; Samuel Armstrong
+62,The Ox-Bow Incident,1943,William A. Wellman
+63,Shadow of a Doubt,1943,Alfred Hitchcock
+64,Meshes of the Afternoon,1943,Alexandr Hackenschmied; Maya Deren
+65,Double Indemnity,1944,Billy Wilder
+66,Meet Me in St. Louis,1944,Vincente Minnelli
+67,Laura,1944,Otto Preminger
+68,Gaslight,1944,George Cukor
+69,Mildred Pierce,1945,Michael Curtiz
+70,Brief Encounter,1945,David Lean
+71,"Rome, Open City",1945,Roberto Rossellini
+72,The Big Sleep,1946,Howard Hawks
+73,It's a Wonderful Life,1946,Frank Capra
+74,Notorious,1946,Alfred Hitchcock
+75,The Best Years of Our Lives,1946,William Wyler
+76,Beauty and the Beast,1946,Jean Cocteau
+77,Black Narcissus,1947,Emeric Pressburger; Michael Powell
+78,Out of the Past,1947,Jacques Tourneur
+79,The Lady from Shanghai,1947,Orson Welles
+80,Red River,1948,Arthur Rosson; Howard Hawks
+81,The Treasure of the Sierra Madre,1948,John Huston
+82,Bicycle Thieves,1948,Vittorio De Sica
+83,The Red Shoes,1948,Emeric Pressburger; Michael Powell
+84,Late Spring,1949,Yasujirō Ozu
+85,The Third Man,1949,Carol Reed
+86,Rashomon,1950,Akira Kurosawa
+87,Sunset Boulevard,1950,Billy Wilder
+88,All About Eve,1950,Joseph L. Mankiewicz
+89,In a Lonely Place,1950,Nicholas Ray
+90,Los Olvidados,1950,Luis Buñuel
+91,A Streetcar Named Desire,1951,Elia Kazan
+92,Strangers on a Train,1951,Alfred Hitchcock
+93,The Day the Earth Stood Still,1951,Robert Wise
+94,The African Queen,1951,John Huston
+95,Singin' in the Rain,1952,Gene Kelly; Stanley Donen
+96,Ikiru,1952,Akira Kurosawa
+97,Umberto D.,1952,Vittorio De Sica
+98,High Noon,1952,Fred Zinnemann
+99,Tokyo Story,1953,Yasujirō Ozu
+100,Roman Holiday,1953,William Wyler
+101,Ugetsu,1953,Kenji Mizoguchi
+102,The Wages of Fear,1953,Henri-Georges Clouzot
+103,Rear Window,1954,Alfred Hitchcock
+104,Seven Samurai,1954,Akira Kurosawa
+105,On the Waterfront,1954,Elia Kazan
+106,Sansho the Bailiff,1954,Kenji Mizoguchi
+107,Dial M for Murder,1954,Alfred Hitchcock
+108,Godzilla,1954,Ishirō Honda
+109,Pather Panchali,1955,Satyajit Ray
+110,The Night of the Hunter,1955,Charles Laughton
+111,Rebel Without a Cause,1955,Nicholas Ray
+112,Rififi,1955,Jules Dassin
+113,Ordet,1955,Carl Theodor Dreyer
+114,The Searchers,1956,John Ford
+115,A Man Escaped,1956,Robert Bresson
+116,The Killing,1956,Stanley Kubrick
+117,The Ten Commandments,1956,Cecil B. DeMille
+118,Invasion of the Body Snatchers,1956,Don Siegel
+119,Throne of Blood,1957,Akira Kurosawa
+120,12 Angry Men,1957,Sidney Lumet
+121,Paths of Glory,1957,Stanley Kubrick
+122,The Seventh Seal,1957,Ingmar Bergman
+123,Wild Strawberries,1957,Ingmar Bergman
+124,The Bridge on the River Kwai,1957,David Lean
+125,Vertigo,1958,Alfred Hitchcock
+126,Touch of Evil,1958,Orson Welles
+127,North by Northwest,1959,Alfred Hitchcock
+128,Some Like It Hot,1959,Billy Wilder
+129,The 400 Blows,1959,François Truffaut
+130,Ben-Hur,1959,William Wyler
+131,Psycho,1960,Alfred Hitchcock
+132,Breathless,1960,Jean-Luc Godard
+133,La Dolce Vita,1960,Federico Fellini
+134,The Apartment,1960,Billy Wilder
+135,L'Avventura,1960,Michelangelo Antonioni
+136,Peeping Tom,1960,Michael Powell
+137,Yojimbo,1961,Akira Kurosawa
+138,West Side Story,1961,Jerome Robbins; Robert Wise
+139,Judgment at Nuremberg,1961,Stanley Kramer
+140,The Hustler,1961,Robert Rossen
+141,La Jetée,1962,Chris Marker
+142,Lawrence of Arabia,1962,David Lean
+143,To Kill a Mockingbird,1962,Robert Mulligan
+144,The Manchurian Candidate,1962,John Frankenheimer
+145,Jules and Jim,1962,François Truffaut
+146,Harakiri,1962,Masaki Kobayashi
+147,Dr. No,1962,Terence Young
+148,8½,1963,Federico Fellini
+149,The Birds,1963,Alfred Hitchcock
+150,High and Low,1963,Akira Kurosawa
+151,The Leopard,1963,Luchino Visconti
+152,The Great Escape,1963,John Sturges
+153,Dr. Strangelove,1964,Stanley Kubrick
+154,The Umbrellas of Cherbourg,1964,Jacques Demy
+155,Goldfinger,1964,Guy Hamilton
+156,A Fistful of Dollars,1964,Sergio Leone
+157,The Sound of Music,1965,Robert Wise
+158,Pierrot le Fou,1965,Jean-Luc Godard
+159,Repulsion,1965,Roman Polanski
+160,Persona,1966,Ingmar Bergman
+161,Andrei Rublev,1966,Andrei Tarkovsky
+162,The Battle of Algiers,1966,Gillo Pontecorvo
+163,"The Good, the Bad and the Ugly",1966,Sergio Leone
+164,Who's Afraid of Virginia Woolf?,1966,Mike Nichols
+165,Blow-Up,1966,Michelangelo Antonioni
+166,Playtime,1967,Jacques Tati
+167,Bonnie and Clyde,1967,Arthur Penn
+168,The Graduate,1967,Mike Nichols
+169,In the Heat of the Night,1967,Norman Jewison
+170,Cool Hand Luke,1967,Stuart Rosenberg
+171,2001: A Space Odyssey,1968,Stanley Kubrick
+172,Once Upon a Time in the West,1968,Sergio Leone
+173,Rosemary's Baby,1968,Roman Polanski
+174,Night of the Living Dead,1968,George A. Romero
+175,Planet of the Apes,1968,Franklin J. Schaffner
+176,Midnight Cowboy,1969,John Schlesinger
+177,Butch Cassidy and the Sundance Kid,1969,George Roy Hill
+178,Easy Rider,1969,Dennis Hopper
+179,Z,1969,Costa-Gavras
+180,The Wild Bunch,1969,Sam Peckinpah
+181,The Conformist,1970,Bernardo Bertolucci
+182,MASH,1970,Robert Altman
+183,Five Easy Pieces,1970,Bob Rafelson
+184,A Clockwork Orange,1971,Stanley Kubrick
+185,The French Connection,1971,William Friedkin
+186,The Last Picture Show,1971,Peter Bogdanovich
+187,Straw Dogs,1971,Sam Peckinpah
+188,The Godfather,1972,Francis Ford Coppola
+189,Solaris,1972,Andrei Tarkovsky
+190,"Aguirre, the Wrath of God",1972,Werner Herzog
+191,Deliverance,1972,John Boorman
+192,Cabaret,1972,Bob Fosse
+193,The Exorcist,1973,William Friedkin
+194,American Graffiti,1973,George Lucas
+195,The Sting,1973,George Roy Hill
+196,Enter the Dragon,1973,Robert Clouse
+197,Mean Streets,1973,Martin Scorsese
+198,The Godfather Part II,1974,Francis Ford Coppola
+199,Chinatown,1974,Roman Polanski
+200,The Conversation,1974,Francis Ford Coppola
+201,Blazing Saddles,1974,Mel Brooks
+202,Young Frankenstein,1974,Mel Brooks
+203,Jaws,1975,Steven Spielberg
+204,One Flew Over the Cuckoo's Nest,1975,Miloš Forman
+205,Dog Day Afternoon,1975,Sidney Lumet
+206,Barry Lyndon,1975,Stanley Kubrick
+207,Monty Python and the Holy Grail,1975,Terry Gilliam; Terry Jones
+208,Taxi Driver,1976,Martin Scorsese
+209,Network,1976,Sidney Lumet
+210,Rocky,1976,John G. Avildsen
+211,All the President's Men,1976,Alan J. Pakula
+212,Carrie,1976,Brian De Palma
+213,Annie Hall,1977,Woody Allen
+214,Star Wars,1977,George Lucas
+215,Close Encounters of the Third Kind,1977,Steven Spielberg
+216,Saturday Night Fever,1977,John Badham
+217,Eraserhead,1977,David Lynch
+218,Halloween,1978,John Carpenter
+219,Dawn of the Dead,1978,George A. Romero
+220,The Deer Hunter,1978,Michael Cimino
+221,Superman,1978,Richard Donner
+222,Days of Heaven,1978,Terrence Malick
+223,Alien,1979,Ridley Scott
+224,Apocalypse Now,1979,Francis Ford Coppola
+225,Life of Brian,1979,Terry Jones
+226,Mad Max,1979,George Miller
+227,Stalker,1979,Andrei Tarkovsky
+228,Manhattan,1979,Woody Allen
+229,Kramer vs. Kramer,1979,Robert Benton
+230,Raging Bull,1980,Martin Scorsese
+231,The Shining,1980,Stanley Kubrick
+232,The Empire Strikes Back,1980,Irvin Kershner
+233,Airplane!,1980,David Zucker; Jerry Zucker; Jim Abrahams
+234,The Elephant Man,1980,David Lynch
+235,Raiders of the Lost Ark,1981,Steven Spielberg
+236,Das Boot,1981,Wolfgang Petersen
+237,Blow Out,1981,Brian De Palma
+238,Blade Runner,1982,Ridley Scott
+239,E.T. the Extra-Terrestrial,1982,Steven Spielberg
+240,The Thing,1982,John Carpenter
+241,Fanny and Alexander,1982,Ingmar Bergman
+242,Scarface,1983,Brian De Palma
+243,The Right Stuff,1983,Philip Kaufman
+244,Videodrome,1983,David Cronenberg
+245,Stop Making Sense,1984,Jonathan Demme
+246,Amadeus,1984,Miloš Forman
+247,"Paris, Texas",1984,Wim Wenders
+248,Once Upon a Time in America,1984,Sergio Leone
+249,The Terminator,1984,James Cameron
+250,This Is Spinal Tap,1984,Rob Reiner
+251,Back to the Future,1985,Robert Zemeckis
+252,Brazil,1985,Terry Gilliam
+253,Ran,1985,Akira Kurosawa
+254,Come and See,1985,Elem Klimov
+255,Blue Velvet,1986,David Lynch
+256,Aliens,1986,James Cameron
+257,Platoon,1986,Oliver Stone
+258,The Fly,1986,David Cronenberg
+259,Castle in the Sky,1986,Hayao Miyazaki
+260,Full Metal Jacket,1987,Stanley Kubrick
+261,The Princess Bride,1987,Rob Reiner
+262,Wings of Desire,1987,Wim Wenders
+263,Raising Arizona,1987,Ethan Coen; Joel Coen
+264,RoboCop,1987,Paul Verhoeven
+265,Akira,1988,Katsuhiro Otomo
+266,My Neighbor Totoro,1988,Hayao Miyazaki
+267,Die Hard,1988,John McTiernan
+268,Cinema Paradiso,1988,Giuseppe Tornatore
+269,Grave of the Fireflies,1988,Isao Takahata
+270,Do the Right Thing,1989,Spike Lee
+271,Goodfellas,1990,Martin Scorsese
+272,The Silence of the Lambs,1991,Jonathan Demme
+273,Terminator 2: Judgment Day,1991,James Cameron
+274,Thelma & Louise,1991,Ridley Scott
+275,Reservoir Dogs,1992,Quentin Tarantino
+276,Unforgiven,1992,Clint Eastwood
+277,Hard Boiled,1992,John Woo
+278,Jurassic Park,1993,Steven Spielberg
+279,Schindler's List,1993,Steven Spielberg
+280,The Piano,1993,Jane Campion
+281,Groundhog Day,1993,Harold Ramis
+282,Three Colors: Blue,1993,Krzysztof Kieślowski
+283,Pulp Fiction,1994,Quentin Tarantino
+284,The Shawshank Redemption,1994,Frank Darabont
+285,Chungking Express,1994,Wong Kar-wai
+286,The Lion King,1994,Rob Minkoff; Roger Allers
+287,Se7en,1995,David Fincher
+288,Toy Story,1995,John Lasseter
+289,Heat,1995,Michael Mann
+290,La Haine,1995,Mathieu Kassovitz
+291,Before Sunrise,1995,Richard Linklater
+292,Fargo,1996,Ethan Coen; Joel Coen
+293,Trainspotting,1996,Danny Boyle
+294,Titanic,1997,James Cameron
+295,L.A. Confidential,1997,Curtis Hanson
+296,Princess Mononoke,1997,Hayao Miyazaki
+297,The Big Lebowski,1998,Ethan Coen; Joel Coen
+298,Saving Private Ryan,1998,Steven Spielberg
+299,The Matrix,1999,Lana Wachowski; Lilly Wachowski
+300,Fight Club,1999,David Fincher
+301,"Crouching Tiger, Hidden Dragon",2000,Ang Lee
+302,In the Mood for Love,2000,Wong Kar-wai
+303,Memento,2000,Christopher Nolan
+304,Yi Yi,2000,Edward Yang
+305,Spirited Away,2001,Hayao Miyazaki
+306,The Lord of the Rings: The Fellowship of the Ring,2001,Peter Jackson
+307,Mulholland Drive,2001,David Lynch
+308,Amélie,2001,Jean-Pierre Jeunet
+309,City of God,2002,Fernando Meirelles; Kátia Lund
+310,The Lord of the Rings: The Two Towers,2002,Peter Jackson
+311,Talk to Her,2002,Pedro Almodóvar
+312,Oldboy,2003,Park Chan-wook
+313,The Lord of the Rings: The Return of the King,2003,Peter Jackson
+314,Brokeback Mountain,2005,Ang Lee
+315,Caché,2005,Michael Haneke
+316,Pan's Labyrinth,2006,Guillermo del Toro
+317,Children of Men,2006,Alfonso Cuarón
+318,The Lives of Others,2006,Florian Henckel von Donnersmarck
+319,No Country for Old Men,2007,Ethan Coen; Joel Coen
+320,There Will Be Blood,2007,Paul Thomas Anderson
+321,Zodiac,2007,David Fincher
+322,The Dark Knight,2008,Christopher Nolan
+323,WALL·E,2008,Andrew Stanton
+324,Inglourious Basterds,2009,Quentin Tarantino
+325,A Prophet,2009,Jacques Audiard
+326,Inception,2010,Christopher Nolan
+327,The Social Network,2010,David Fincher
+328,A Separation,2011,Asghar Farhadi
+329,The Tree of Life,2011,Terrence Malick
+330,Drive,2011,Nicolas Winding Refn
+331,Amour,2012,Michael Haneke
+332,The Act of Killing,2012,Joshua Oppenheimer; Christine Cynn; Anonymous
+333,Her,2013,Spike Jonze
+334,12 Years a Slave,2013,Steve McQueen
+335,The Grand Budapest Hotel,2014,Wes Anderson
+336,Boyhood,2014,Richard Linklater
+337,Whiplash,2014,Damien Chazelle
+338,Mad Max: Fury Road,2015,George Miller
+339,Spotlight,2015,Tom McCarthy
+340,Inside Out,2015,Pete Docter; Ronnie del Carmen
+341,Moonlight,2016,Barry Jenkins
+342,Arrival,2016,Denis Villeneuve
+343,The Handmaiden,2016,Park Chan-wook
+344,Manchester by the Sea,2016,Kenneth Lonergan
+345,Get Out,2017,Jordan Peele
+346,Dunkirk,2017,Christopher Nolan
+347,Roma,2018,Alfonso Cuarón
+348,Spider-Man: Into the Spider-Verse,2018,Bob Persichetti; Peter Ramsey; Rodney Rothman
+349,Parasite,2019,Bong Joon-ho
+350,Portrait of a Lady on Fire,2019,Céline Sciamma
+351,Another Round,2020,Thomas Vinterberg
+352,Nomadland,2020,Chloé Zhao
+353,Minari,2020,Lee Isaac Chung
+354,The Father,2020,Florian Zeller
+355,Dune,2021,Denis Villeneuve
+356,Drive My Car,2021,Ryusuke Hamaguchi
+357,The Worst Person in the World,2021,Joachim Trier
+358,Everything Everywhere All at Once,2022,Dan Kwan; Daniel Scheinert
+359,Tár,2022,Todd Field
+360,Aftersun,2022,Charlotte Wells
+361,The Banshees of Inisherin,2022,Martin McDonagh
+362,Oppenheimer,2023,Christopher Nolan
+363,Past Lives,2023,Celine Song
+364,The Zone of Interest,2023,Jonathan Glazer
+365,Dune: Part Two,2024,Denis Villeneuve

@@ -2,6 +2,8 @@
 
 A two-person command-line program that selects a random unwatched movie, collects a yes/no vote from each person, and updates the movie's status in SQLite.
 
+`pm.db` is a local runtime database and is not tracked in Git. A fresh clone can create it from the tracked seed list at `data/seed-movies.csv`.
+
 ## Run the program
 
 From the project directory:
@@ -12,6 +14,23 @@ From the project directory:
 .venv/bin/python movie-night.py listunwatched
 .venv/bin/python movie-night.py listwatched
 ```
+
+## First-time database setup
+
+The first time you run a movie command without `pm.db`, the app asks whether to create the database from `data/seed-movies.csv`. You can edit that CSV first, or replace it with your own CSV using the same headers:
+
+```csv
+id,title,year,director
+```
+
+You can also create the database directly:
+
+```bash
+.venv/bin/python create_database.py
+.venv/bin/python create_database.py --csv path/to/your-movies.csv --db pm.db
+```
+
+If `pm.db` already exists, pass `--replace` to rebuild the film rows from CSV.
 
 ## First-time voter setup
 
@@ -38,7 +57,7 @@ Votes exist only while the program is processing the current movie. Individual v
 
 ## Stored data
 
-`pm.db` contains:
+The generated `pm.db` contains:
 
 - `films`: movie details and final status (`0` unwatched, `1` skipped, `2` watched).
 - `voters`: two ordered display names (`position` and `name` only).

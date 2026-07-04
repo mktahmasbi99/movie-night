@@ -1,4 +1,4 @@
-import shutil
+import os
 import sqlite3
 import subprocess
 import sys
@@ -19,16 +19,7 @@ MAIN_PATH = PROJECT_DIR / "movie-night.py"
 def create_test_connection():
     connection = sqlite3.connect(":memory:")
     connection.row_factory = sqlite3.Row
-    connection.execute(
-        """
-        CREATE TABLE films (
-            id INTEGER PRIMARY KEY,
-            title TEXT NOT NULL,
-            year INTEGER NOT NULL,
-            status INTEGER NOT NULL DEFAULT 0
-        )
-        """
-    )
+    main.ensure_films_table(connection)
     return connection
 
 
@@ -138,11 +129,54 @@ class VoterSetupTests(unittest.TestCase):
         self.assertNotIn("votes", tables)
 
 
+class SeedDatabaseTests(unittest.TestCase):
+    def test_seed_csv_can_create_database(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            database_path = Path(temporary_directory) / "pm.db"
+            movie_count = main.create_database_from_csv(
+                database_path, PROJECT_DIR / "data" / "seed-movies.csv"
+            )
+            connection = sqlite3.connect(database_path)
+            try:
+                stored_count = connection.execute("SELECT COUNT(*) FROM films").fetchone()[0]
+                columns = {
+                    row[1] for row in connection.execute("PRAGMA table_info(films)")
+                }
+            finally:
+                connection.close()
+
+        self.assertEqual(365, movie_count)
+        self.assertEqual(movie_count, stored_count)
+        self.assertIn("director", columns)
+        self.assertIn("rewatch_worthy", columns)
+
+    def test_first_run_setup_can_seed_missing_database(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            database_path = Path(temporary_directory) / "pm.db"
+            output = StringIO()
+            with patch("builtins.input", side_effect=["y"]), redirect_stdout(output):
+                result = main.main(["listunwatched"], db_path=database_path)
+
+        self.assertEqual(0, result)
+        self.assertIn("Created pm.db with 365 movies", output.getvalue())
+        self.assertIn("Here are your unwatched movies", output.getvalue())
+
+    def test_first_run_setup_can_be_declined(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            database_path = Path(temporary_directory) / "pm.db"
+            output = StringIO()
+            with patch("builtins.input", side_effect=["n"]), redirect_stdout(output):
+                result = main.main(["listunwatched"], db_path=database_path)
+
+        self.assertEqual(1, result)
+        self.assertIn("Database setup skipped", output.getvalue())
+
+
 class DatabaseConstraintTests(unittest.TestCase):
     def setUp(self):
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.database_path = Path(self.temporary_directory.name) / "pm.db"
-        shutil.copy2(PROJECT_DIR / "pm.db", self.database_path)
+        main.create_database_from_csv(self.database_path, PROJECT_DIR / "data" / "seed-movies.csv")
         self.connection = sqlite3.connect(self.database_path)
 
     def tearDown(self):
@@ -182,18 +216,22 @@ class CommandLineTests(unittest.TestCase):
         self.assertEqual(0, result.returncode)
         self.assertIn("randommovie", result.stdout)
 
-    def test_database_path_is_independent_of_working_directory(self):
+    def test_declined_database_setup_does_not_create_db_in_working_directory(self):
         with tempfile.TemporaryDirectory() as working_directory:
+            database_path = Path(working_directory) / "custom-pm.db"
+            env = {**os.environ, "MOVIE_NIGHT_DB_PATH": str(database_path)}
             result = subprocess.run(
                 [sys.executable, str(MAIN_PATH), "listwatched"],
                 cwd=working_directory,
+                input="n\n",
                 capture_output=True,
                 text=True,
                 check=False,
+                env=env,
             )
             self.assertFalse((Path(working_directory) / "pm.db").exists())
-        self.assertEqual(0, result.returncode)
-        self.assertIn("watched movies", result.stdout)
+        self.assertEqual(1, result.returncode)
+        self.assertIn("Database setup skipped", result.stdout)
 
     def test_unknown_command_is_rejected(self):
         result = subprocess.run(
