@@ -39,3 +39,6 @@ files-to-ignore/
 
 # Local runtime database
 pm.db
+
+# Local assistant context
+AGENTS.md

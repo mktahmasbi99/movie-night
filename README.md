@@ -7,10 +7,10 @@ A two-person command-line program that selects a random unwatched movie, collect
 From the project directory:
 
 ```bash
-.venv/bin/python main.py --help
-.venv/bin/python main.py randommovie
-.venv/bin/python main.py listunwatched
-.venv/bin/python main.py listwatched
+.venv/bin/python movie-night.py --help
+.venv/bin/python movie-night.py randommovie
+.venv/bin/python movie-night.py listunwatched
+.venv/bin/python movie-night.py listwatched
 ```
 
 ## First-time voter setup

@@ -1,4 +1,3 @@
-from movie_night import *  # noqa: F403
 from movie_night import main
 
 

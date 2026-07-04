@@ -13,7 +13,7 @@ import main
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
-MAIN_PATH = PROJECT_DIR / "main.py"
+MAIN_PATH = PROJECT_DIR / "movie-night.py"
 
 
 def create_test_connection():
