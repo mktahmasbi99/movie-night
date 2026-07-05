@@ -1,79 +1,89 @@
 # Movie Night
 
-A two-person command-line program that selects a random unwatched movie, collects a yes/no vote from each person, and updates the movie's status in SQLite.
+Movie Night is a local browser app for choosing what to watch together. It picks a random unwatched movie, collects a yes/no vote from two saved voters, and updates the movie's status in SQLite.
 
-`pm.db` is a local runtime database and is not tracked in Git. A fresh clone can create it from the tracked seed list at `data/seed-movies.csv`.
+The app stores runtime data in `pm.db`, which is local to your machine and not tracked in Git. A fresh clone can create that database from the tracked seed list at `data/seed-movies.csv`.
 
-## Run the program
+## Run the browser app
 
 From the project directory:
-
-```bash
-.venv/bin/python movie_night.py --help
-.venv/bin/python movie_night.py randommovie
-.venv/bin/python movie_night.py listunwatched
-.venv/bin/python movie_night.py listwatched
-```
-
-## Run the web prototype
-
-Start the local browser UI with:
 
 ```bash
 python3 app.py --host 0.0.0.0 --port 5001
 ```
 
-Then open the forwarded code-server URL or:
+Then open the forwarded code-server URL, or open the app directly if the port is exposed:
 
 ```text
 http://localhost:5001
 ```
 
-## First-time database setup
+For a local-only run on your current machine:
 
-The first time you run a movie command without `pm.db`, the app asks whether to create the database from `data/seed-movies.csv`. You can edit that CSV first, or replace it with your own CSV using the same headers:
+```bash
+python3 app.py --host 127.0.0.1 --port 5001
+```
+
+## Browser features
+
+- Pick a random unwatched movie in the Tonight view.
+- Save two voter names and reuse them automatically.
+- Vote yes/no for each voter.
+- Mark a movie watched if either voter says yes.
+- Mark a movie skipped if both voters say no.
+- Browse movies by status: all, unwatched, skipped, watched, and rewatch-worthy.
+- Add, edit, and delete movie entries from the Movies view.
+- Track rewatch-worthy as a three-state value: blank, yes, or no.
+- Create `pm.db` from the seed CSV in the Setup view.
+
+## First-time setup
+
+Open the browser app and go to **Setup**.
+
+1. Create the database from `data/seed-movies.csv`.
+2. Save two different, non-empty voter names.
+3. Go to **Tonight** and pick a movie.
+
+You can edit `data/seed-movies.csv` before creating the database, or replace it with your own CSV using the same headers:
 
 ```csv
 id,title,year,director
 ```
 
-You can also create the database directly:
+## Terminal commands
+
+The browser app is the main interface, but the terminal commands are still available.
+
+Run the original CLI:
 
 ```bash
-.venv/bin/python create_database.py
-.venv/bin/python create_database.py --csv path/to/your-movies.csv --db pm.db
+python3 movie_night.py --help
+python3 movie_night.py randommovie
+python3 movie_night.py listunwatched
+python3 movie_night.py listwatched
 ```
 
-If `pm.db` already exists, pass `--replace` to rebuild the film rows from CSV.
+Create or rebuild the database from the terminal:
 
-## First-time voter setup
-
-Voter names are not hard-coded. The first time `randommovie` runs, the program asks for two different, non-empty names:
-
-```text
-Welcome! Let's set up the two voters.
-Enter voter 1's name: Alice
-Enter voter 2's name: Bob
-Voters saved: Alice and Bob.
+```bash
+python3 create_database.py
+python3 create_database.py --csv path/to/your-movies.csv --db pm.db
+python3 create_database.py --replace
 ```
-
-The names are saved in the `voters` table in `pm.db` and reused automatically on later runs. Listing movies and displaying help do not trigger setup.
 
 ## Voting behavior
 
-The program always uses two voters:
+The app always uses two voters:
 
 - If either person votes yes, the movie is marked watched.
 - If both people vote no, the movie is marked skipped.
-- After a skipped movie, the program can select another random movie.
-
-Votes exist only while the program is processing the current movie. Individual votes and voting history are not written to the database. The database stores only the two display names and the resulting movie status.
+- Individual votes are not saved as history; only the resulting movie status is stored.
 
 ## Stored data
 
 The generated `pm.db` contains:
 
-- `films`: movie details and final status (`0` unwatched, `1` skipped, `2` watched).
+- `films`: movie details, final status (`0` unwatched, `1` skipped, `2` watched), director, and rewatch-worthy metadata.
 - `voters`: two ordered display names (`position` and `name` only).
 
 The database rejects unsupported movie statuses, invalid `rewatch_worthy` values, blank voter names, duplicate voter names, and voter positions other than 1 or 2.
@@ -83,5 +93,5 @@ The database rejects unsupported movie statuses, invalid `rewatch_worthy` values
 Run the test suite with:
 
 ```bash
-.venv/bin/python -m unittest discover -s tests -v
+python3 -m unittest discover -s tests -v
 ```
