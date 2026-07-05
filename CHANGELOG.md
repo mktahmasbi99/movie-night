@@ -15,6 +15,7 @@ All notable changes to Movie Night will be documented in this file.
 - Added a local `AGENTS.md` context file for future assistant sessions.
 
 ### Changed
+- Moved Pick Movie into the Tonight tab so it only appears with the voting workflow.
 - Added regression coverage to ensure existing `pm.db` files are used as-is without seed import, metadata sync, or schema changes.
 - Updated README with instructions for running the browser prototype on a local or forwarded port.
 - Replaced the ignored local movie list workflow with the tracked seed CSV as the source for new databases.

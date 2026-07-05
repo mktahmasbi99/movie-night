@@ -470,7 +470,6 @@ INDEX_HTML = """<!doctype html>
         <h1>Movie Night</h1>
         <p class="subtitle">Pick a movie, collect two votes, keep the list moving.</p>
       </div>
-      <button class="primary" id="pickButton">Pick Movie</button>
     </header>
 
     <nav class="tabs" aria-label="Main views">
@@ -483,9 +482,12 @@ INDEX_HTML = """<!doctype html>
       <section class="view active" id="tonight">
         <div class="grid">
           <section class="panel">
-            <h2>Tonight's Pick</h2>
+            <div class="toolbar">
+              <h2>Tonight's Pick</h2>
+              <button class="primary" id="pickButton">Pick Movie</button>
+            </div>
             <div id="movieStage">
-              <p class="empty">Create the database, save two voters, then pick a movie.</p>
+              <p class="empty">No movie picked yet.</p>
             </div>
           </section>
           <aside class="panel">
@@ -591,7 +593,7 @@ INDEX_HTML = """<!doctype html>
         return;
       }
       if (!currentPick) {
-        $("#movieStage").innerHTML = `<p class="empty">Ready. Pick a random unwatched movie.</p>`;
+        $("#movieStage").innerHTML = `<p class="empty">No movie picked yet.</p>`;
         return;
       }
 
