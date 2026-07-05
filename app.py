@@ -73,6 +73,15 @@ def list_movies(conn, status_filter="all"):
             """,
             (status_values[status_filter],),
         ).fetchall()
+    elif status_filter == "rewatch-worthy":
+        rows = conn.execute(
+            """
+            SELECT *
+            FROM films
+            WHERE rewatch_worthy = 1
+            ORDER BY year, title;
+            """
+        ).fetchall()
     else:
         rows = conn.execute(
             """
@@ -511,6 +520,7 @@ INDEX_HTML = """<!doctype html>
               <option value="unwatched">Unwatched</option>
               <option value="skipped">Skipped</option>
               <option value="watched">Watched</option>
+              <option value="rewatch-worthy">Rewatch-Worthy</option>
             </select>
           </div>
           <div id="movieTable"></div>
@@ -647,7 +657,7 @@ INDEX_HTML = """<!doctype html>
       $("#movieTable").innerHTML = `
         <table>
           <thead>
-            <tr><th>Title</th><th>Year</th><th>Director</th><th>Rewatch</th><th>Status</th></tr>
+            <tr><th>Title</th><th>Year</th><th>Director</th><th>Rewatch-Worthy</th><th>Status</th></tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>

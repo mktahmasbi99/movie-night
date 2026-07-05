@@ -239,6 +239,28 @@ class WebApiSerializationTests(unittest.TestCase):
         self.assertEqual(0, values["No"])
         self.assertEqual(1, values["Yes"])
 
+    def test_rewatch_worthy_filter_only_returns_yes_values(self):
+        connection = sqlite3.connect(":memory:")
+        connection.row_factory = sqlite3.Row
+        try:
+            movie_night.ensure_films_table(connection)
+            connection.executemany(
+                """
+                INSERT INTO films (id, title, year, status, rewatch_worthy)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    (1, "Unknown", 2024, movie_night.STATUS_UNWATCHED, None),
+                    (2, "No", 2024, movie_night.STATUS_UNWATCHED, 0),
+                    (3, "Yes", 2024, movie_night.STATUS_WATCHED, 1),
+                ),
+            )
+            movies = app.list_movies(connection, "rewatch-worthy")
+        finally:
+            connection.close()
+
+        self.assertEqual(["Yes"], [movie["title"] for movie in movies])
+
 
 class DatabaseConstraintTests(unittest.TestCase):
     def setUp(self):

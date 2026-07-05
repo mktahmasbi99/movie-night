@@ -5,7 +5,7 @@ All notable changes to Movie Night will be documented in this file.
 ## Unreleased
 
 ### Added
-- Added a Rewatch column to the browser movie list with status-style Yes/No badges and blank display for unset values.
+- Added a Rewatch-Worthy movie-list column and filter with status-style Yes/No badges and blank display for unset values.
 - Fixed browser API calls so the app works correctly behind code-server proxy URLs.
 - Added `app.py` as a dependency-free browser prototype for picking movies, saving voters, voting, and viewing filtered movie lists.
 - Added `data/seed-movies.csv` as a tracked, editable CSV seed list for fresh installs.
