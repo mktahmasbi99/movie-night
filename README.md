@@ -15,6 +15,20 @@ From the project directory:
 .venv/bin/python movie_night.py listwatched
 ```
 
+## Run the web prototype
+
+Start the local browser UI with:
+
+```bash
+python3 app.py --host 0.0.0.0 --port 5001
+```
+
+Then open the forwarded code-server URL or:
+
+```text
+http://localhost:5001
+```
+
 ## First-time database setup
 
 The first time you run a movie command without `pm.db`, the app asks whether to create the database from `data/seed-movies.csv`. You can edit that CSV first, or replace it with your own CSV using the same headers:
