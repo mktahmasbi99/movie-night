@@ -262,6 +262,97 @@ class WebApiSerializationTests(unittest.TestCase):
         self.assertEqual(["Yes"], [movie["title"] for movie in movies])
 
 
+class MovieManagementTests(unittest.TestCase):
+    def setUp(self):
+        self.connection = create_test_connection()
+        self.connection.execute(
+            """
+            INSERT INTO films (id, title, year, status, director, rewatch_worthy)
+            VALUES (1, 'Suspiria', 1977, ?, 'Dario Argento', NULL)
+            """,
+            (movie_night.STATUS_UNWATCHED,),
+        )
+        self.connection.commit()
+
+    def tearDown(self):
+        self.connection.close()
+
+    def test_save_movie_requires_confirmation(self):
+        with self.assertRaisesRegex(ValueError, "CONFIRM"):
+            app.save_movie(
+                self.connection,
+                {
+                    "id": 1,
+                    "title": "Suspiria",
+                    "year": 1977,
+                    "status": movie_night.STATUS_WATCHED,
+                    "rewatchWorthy": 1,
+                    "confirmation": "",
+                },
+            )
+
+    def test_save_movie_updates_fields_after_confirmation(self):
+        movie = app.save_movie(
+            self.connection,
+            {
+                "id": 1,
+                "title": "Suspiria corrected",
+                "year": 1978,
+                "director": "Dario Argento",
+                "status": movie_night.STATUS_WATCHED,
+                "rewatchWorthy": 1,
+                "confirmation": "CONFIRM",
+            },
+        )
+
+        self.assertEqual("Suspiria corrected", movie["title"])
+        self.assertEqual(1978, movie["year"])
+        self.assertEqual(movie_night.STATUS_WATCHED, movie["status"])
+        self.assertEqual(1, movie["rewatchWorthy"])
+
+    def test_save_movie_adds_entry_without_confirmation(self):
+        movie = app.save_movie(
+            self.connection,
+            {
+                "title": "New Film",
+                "year": 2026,
+                "director": "Someone",
+                "status": movie_night.STATUS_UNWATCHED,
+                "rewatchWorthy": None,
+            },
+        )
+
+        self.assertEqual("New Film", movie["title"])
+        self.assertIsNone(movie["rewatchWorthy"])
+
+    def test_save_movie_adds_entry_with_blank_text_fields(self):
+        movie = app.save_movie(
+            self.connection,
+            {
+                "title": "",
+                "year": "",
+                "director": "",
+                "status": movie_night.STATUS_UNWATCHED,
+                "rewatchWorthy": None,
+            },
+        )
+
+        self.assertIsNone(movie["title"])
+        self.assertIsNone(movie["year"])
+        self.assertIsNone(movie["director"])
+
+    def test_delete_movie_requires_delete_confirmation(self):
+        with self.assertRaisesRegex(ValueError, "DELETE"):
+            app.delete_movie(self.connection, {"id": 1, "confirmation": "CONFIRM"})
+
+    def test_delete_movie_removes_entry_after_confirmation(self):
+        result = app.delete_movie(self.connection, {"id": 1, "confirmation": "DELETE"})
+        row = self.connection.execute("SELECT 1 FROM films WHERE id = 1").fetchone()
+
+        self.assertEqual({"deleted": 1}, result)
+        self.assertIsNone(row)
+
+
 class DatabaseConstraintTests(unittest.TestCase):
     def setUp(self):
         self.temporary_directory = tempfile.TemporaryDirectory()

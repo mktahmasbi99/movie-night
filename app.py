@@ -109,6 +109,129 @@ def response_state(conn):
     return state
 
 
+def clean_movie_payload(payload):
+    title = str(payload.get("title", "")).strip() or None
+
+    year_value = payload.get("year")
+    if year_value in ("", None):
+        year = None
+    else:
+        try:
+            year = int(year_value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Year must be a number or blank.") from exc
+
+    try:
+        status = int(payload.get("status"))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Status is required.") from exc
+    if status not in STATUS_LABELS:
+        raise ValueError("Unknown movie status.")
+
+    rewatch_worthy = payload.get("rewatchWorthy")
+    if rewatch_worthy in ("", None):
+        rewatch_worthy = None
+    else:
+        try:
+            rewatch_worthy = int(rewatch_worthy)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Rewatch-Worthy must be Yes, No, or blank.") from exc
+        if rewatch_worthy not in (0, 1):
+            raise ValueError("Rewatch-Worthy must be Yes, No, or blank.")
+
+    director = str(payload.get("director", "")).strip() or None
+    return {
+        "title": title,
+        "year": year,
+        "director": director,
+        "status": status,
+        "rewatch_worthy": rewatch_worthy,
+    }
+
+
+def fetch_movie(conn, movie_id):
+    row = conn.execute("SELECT * FROM films WHERE id = ?;", (movie_id,)).fetchone()
+    if row is None:
+        raise ValueError("Movie not found.")
+    return row_to_movie(row)
+
+
+def save_movie(conn, payload):
+    global CURRENT_PICK, CURRENT_VOTES
+
+    movie_id = payload.get("id")
+    is_edit = movie_id not in (None, "")
+    if is_edit and payload.get("confirmation") != "CONFIRM":
+        raise ValueError("Type CONFIRM to save changes.")
+
+    movie = clean_movie_payload(payload)
+    with conn:
+        if not is_edit:
+            cursor = conn.execute(
+                """
+                INSERT INTO films (title, year, director, status, rewatch_worthy)
+                VALUES (?, ?, ?, ?, ?);
+                """,
+                (
+                    movie["title"],
+                    movie["year"],
+                    movie["director"],
+                    movie["status"],
+                    movie["rewatch_worthy"],
+                ),
+            )
+            saved_id = cursor.lastrowid
+        else:
+            try:
+                saved_id = int(movie_id)
+            except (TypeError, ValueError) as exc:
+                raise ValueError("Movie id must be a number.") from exc
+            cursor = conn.execute(
+                """
+                UPDATE films
+                SET title = ?, year = ?, director = ?, status = ?, rewatch_worthy = ?
+                WHERE id = ?;
+                """,
+                (
+                    movie["title"],
+                    movie["year"],
+                    movie["director"],
+                    movie["status"],
+                    movie["rewatch_worthy"],
+                    saved_id,
+                ),
+            )
+            if cursor.rowcount == 0:
+                raise ValueError("Movie not found.")
+
+    saved_movie = fetch_movie(conn, saved_id)
+    if CURRENT_PICK and CURRENT_PICK["id"] == saved_id:
+        CURRENT_PICK = saved_movie
+        CURRENT_VOTES = {}
+    return saved_movie
+
+
+def delete_movie(conn, payload):
+    global CURRENT_PICK, CURRENT_VOTES
+
+    if payload.get("confirmation") != "DELETE":
+        raise ValueError("Type DELETE to delete this movie.")
+    try:
+        movie_id = int(payload.get("id"))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Movie id must be a number.") from exc
+
+    with conn:
+        cursor = conn.execute("DELETE FROM films WHERE id = ?;", (movie_id,))
+        if cursor.rowcount == 0:
+            raise ValueError("Movie not found.")
+
+    if CURRENT_PICK and CURRENT_PICK["id"] == movie_id:
+        CURRENT_PICK = None
+        CURRENT_VOTES = {}
+    return {"deleted": movie_id}
+
+
 def save_voters(conn, voters):
     clean_voters = [voter.strip() for voter in voters]
     if len(clean_voters) != 2 or not all(clean_voters):
@@ -201,6 +324,12 @@ class MovieNightHandler(BaseHTTPRequestHandler):
             self.with_connection(
                 lambda conn: record_vote(conn, payload["voter"], payload["vote"])
             )
+        elif parsed.path == "/api/movie":
+            payload = self.read_json()
+            self.with_connection(lambda conn: {"movie": save_movie(conn, payload)})
+        elif parsed.path == "/api/movie/delete":
+            payload = self.read_json()
+            self.with_connection(lambda conn: delete_movie(conn, payload))
         else:
             self.send_error(404, "Not found")
 
@@ -436,6 +565,49 @@ INDEX_HTML = """<!doctype html>
       margin-bottom: 12px;
       align-items: center;
     }
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .toolbar-actions select { min-width: 190px; }
+    .table-action { min-height: 34px; padding: 0 10px; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 10, 0.76);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal {
+      width: min(760px, 100%);
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+    }
+    .movie-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .movie-form .full { grid-column: 1 / -1; }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -465,7 +637,7 @@ INDEX_HTML = """<!doctype html>
     @media (max-width: 820px) {
       .shell { padding: 16px; }
       header { display: block; }
-      .grid, .voters, .setup-form { grid-template-columns: 1fr; }
+      .grid, .voters, .setup-form, .movie-form { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr; }
       table { font-size: 14px; }
       th:nth-child(3), td:nth-child(3) { display: none; }
@@ -515,13 +687,16 @@ INDEX_HTML = """<!doctype html>
         <section class="panel">
           <div class="toolbar">
             <h2>Movies</h2>
-            <select id="movieFilter" aria-label="Movie status filter">
-              <option value="all">All movies</option>
-              <option value="unwatched">Unwatched</option>
-              <option value="skipped">Skipped</option>
-              <option value="watched">Watched</option>
-              <option value="rewatch-worthy">Rewatch-Worthy</option>
-            </select>
+            <div class="toolbar-actions">
+              <select id="movieFilter" aria-label="Movie status filter">
+                <option value="all">All movies</option>
+                <option value="unwatched">Unwatched</option>
+                <option value="skipped">Skipped</option>
+                <option value="watched">Watched</option>
+                <option value="rewatch-worthy">Rewatch-Worthy</option>
+              </select>
+              <button id="addMovieButton">Add Movie</button>
+            </div>
           </div>
           <div id="movieTable"></div>
         </section>
@@ -551,10 +726,60 @@ INDEX_HTML = """<!doctype html>
     </main>
   </div>
 
+  <div class="modal-backdrop" id="movieModal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="movieEditorTitle">
+      <div class="toolbar">
+        <h2 id="movieEditorTitle">Edit Movie</h2>
+        <button id="closeMovieModal" type="button">Close</button>
+      </div>
+      <form class="movie-form" id="movieForm">
+        <input id="movieId" type="hidden">
+        <label class="full">
+          Title
+          <input id="movieTitle">
+        </label>
+        <label>
+          Year
+          <input id="movieYear" inputmode="numeric">
+        </label>
+        <label>
+          Status
+          <select id="movieStatus">
+            <option value="0">Unwatched</option>
+            <option value="1">Skipped</option>
+            <option value="2">Watched</option>
+          </select>
+        </label>
+        <label>
+          Director
+          <input id="movieDirector">
+        </label>
+        <label>
+          Rewatch-Worthy
+          <select id="movieRewatch">
+            <option value="">Unset</option>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+          </select>
+        </label>
+        <label class="full" id="movieConfirmationGroup">
+          Confirmation
+          <input id="movieConfirmation" autocomplete="off" placeholder="CONFIRM to save, DELETE to delete">
+        </label>
+        <p class="message full" id="movieEditorMessage"></p>
+        <div class="modal-actions full">
+          <button id="deleteMovieButton" class="no" type="button">Delete Movie</button>
+          <button class="primary" id="saveMovieButton" type="submit">Save Changes</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
   <script>
     const app = {
       state: null,
       movieFilter: "all",
+      movies: [],
     };
 
     const $ = (selector) => document.querySelector(selector);
@@ -573,6 +798,47 @@ INDEX_HTML = """<!doctype html>
       const element = $(selector);
       element.textContent = text || "";
       element.classList.toggle("error", isError);
+    }
+
+    function setEditorMessage(text, isError = false) {
+      setMessage("#movieEditorMessage", text, isError);
+    }
+
+    function openMovieEditor(movie = null) {
+      const isEdit = Boolean(movie);
+      $("#movieEditorTitle").textContent = isEdit ? "Edit Movie" : "Add Movie";
+      $("#movieId").value = movie ? movie.id : "";
+      $("#movieTitle").value = movie ? movie.title : "";
+      $("#movieYear").value = movie ? movie.year : "";
+      $("#movieDirector").value = movie && movie.director ? movie.director : "";
+      $("#movieStatus").value = movie ? String(movie.status) : "0";
+      $("#movieRewatch").value = movie && movie.rewatchWorthy !== null ? String(movie.rewatchWorthy) : "";
+      $("#movieConfirmation").value = "";
+      $("#movieConfirmationGroup").style.display = isEdit ? "block" : "none";
+      $("#deleteMovieButton").style.display = isEdit ? "inline-flex" : "none";
+      $("#saveMovieButton").textContent = isEdit ? "Save Changes" : "Add Movie";
+      setEditorMessage("");
+      $("#movieModal").classList.add("active");
+      $("#movieModal").setAttribute("aria-hidden", "false");
+      $("#movieTitle").focus();
+    }
+
+    function closeMovieEditor() {
+      $("#movieModal").classList.remove("active");
+      $("#movieModal").setAttribute("aria-hidden", "true");
+    }
+
+    function moviePayload() {
+      const rewatchValue = $("#movieRewatch").value;
+      return {
+        id: $("#movieId").value,
+        title: $("#movieTitle").value,
+        year: $("#movieYear").value,
+        director: $("#movieDirector").value,
+        status: Number($("#movieStatus").value),
+        rewatchWorthy: rewatchValue === "" ? null : Number(rewatchValue),
+        confirmation: $("#movieConfirmation").value,
+      };
     }
 
     function statusBadge(movie) {
@@ -624,9 +890,9 @@ INDEX_HTML = """<!doctype html>
       }).join("");
 
       $("#movieStage").innerHTML = `
-        <div class="movie-title">${escapeHtml(currentPick.title)}</div>
+        <div class="movie-title">${escapeHtml(currentPick.title || "Untitled")}</div>
         <div class="meta">
-          <span>${currentPick.year}</span>
+          ${currentPick.year === null ? "" : `<span>${currentPick.year}</span>`}
           <span>${escapeHtml(currentPick.director || "Unknown director")}</span>
           ${statusBadge(currentPick)}
         </div>
@@ -641,23 +907,25 @@ INDEX_HTML = """<!doctype html>
 
     async function loadMovies() {
       const data = await api(`api/movies?status=${encodeURIComponent(app.movieFilter)}`);
+      app.movies = data.movies;
       if (!data.movies.length) {
         $("#movieTable").innerHTML = `<p class="empty">No movies found.</p>`;
         return;
       }
       const rows = data.movies.map((movie) => `
         <tr>
-          <td>${escapeHtml(movie.title)}</td>
-          <td>${movie.year}</td>
+          <td>${escapeHtml(movie.title || "")}</td>
+          <td>${movie.year === null ? "" : movie.year}</td>
           <td>${escapeHtml(movie.director || "")}</td>
           <td>${rewatchBadge(movie)}</td>
           <td>${statusBadge(movie)}</td>
+          <td><button class="table-action" data-edit-movie="${movie.id}">Edit</button></td>
         </tr>
       `).join("");
       $("#movieTable").innerHTML = `
         <table>
           <thead>
-            <tr><th>Title</th><th>Year</th><th>Director</th><th>Rewatch-Worthy</th><th>Status</th></tr>
+            <tr><th>Title</th><th>Year</th><th>Director</th><th>Rewatch-Worthy</th><th>Status</th><th>Actions</th></tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
@@ -681,6 +949,40 @@ INDEX_HTML = """<!doctype html>
         tab.classList.add("active");
         $(`#${tab.dataset.view}`).classList.add("active");
         if (tab.dataset.view === "movies") loadMovies();
+        return;
+      }
+
+      if (event.target.id === "addMovieButton") {
+        openMovieEditor();
+        return;
+      }
+
+      const editButton = event.target.closest("[data-edit-movie]");
+      if (editButton) {
+        const movieId = Number(editButton.dataset.editMovie);
+        const movie = app.movies.find((item) => item.id === movieId);
+        if (movie) openMovieEditor(movie);
+        return;
+      }
+
+      if (event.target.id === "closeMovieModal") {
+        closeMovieEditor();
+        return;
+      }
+
+      if (event.target.id === "deleteMovieButton") {
+        try {
+          const payload = { id: $("#movieId").value, confirmation: $("#movieConfirmation").value };
+          await api("api/movie/delete", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          closeMovieEditor();
+          await loadState();
+          await loadMovies();
+        } catch (error) {
+          setEditorMessage(error.message, true);
+        }
         return;
       }
 
@@ -731,6 +1033,21 @@ INDEX_HTML = """<!doctype html>
     $("#movieFilter").addEventListener("change", (event) => {
       app.movieFilter = event.target.value;
       loadMovies();
+    });
+
+    $("#movieForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      try {
+        await api("api/movie", {
+          method: "POST",
+          body: JSON.stringify(moviePayload()),
+        });
+        closeMovieEditor();
+        await loadState();
+        await loadMovies();
+      } catch (error) {
+        setEditorMessage(error.message, true);
+      }
     });
 
     $("#voterForm").addEventListener("submit", async (event) => {
