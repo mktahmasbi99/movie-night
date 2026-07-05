@@ -1,10 +1,14 @@
 import argparse
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 import movie_night
 
+
+PROJECT_DIR = Path(__file__).resolve().parent
+ASSETS_DIR = PROJECT_DIR / "assets"
 
 STATUS_LABELS = {
     movie_night.STATUS_UNWATCHED: "Unwatched",
@@ -301,6 +305,8 @@ class MovieNightHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/":
             self.send_html(INDEX_HTML)
+        elif parsed.path == "/assets/movie-night-header.png":
+            self.send_asset(ASSETS_DIR / "movie-night-header.png", "image/png")
         elif parsed.path == "/api/state":
             self.with_connection(lambda conn: response_state(conn))
         elif parsed.path == "/api/movies":
@@ -365,6 +371,19 @@ class MovieNightHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(encoded)))
         self.end_headers()
         self.wfile.write(encoded)
+
+    def send_asset(self, path, content_type):
+        try:
+            data = path.read_bytes()
+        except FileNotFoundError:
+            self.send_error(404, "Asset not found")
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Cache-Control", "public, max-age=3600")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
 
     def send_json(self, body, status=200):
         encoded = json.dumps(body).encode("utf-8")
@@ -443,12 +462,38 @@ INDEX_HTML = """<!doctype html>
       margin: 0 auto;
       padding: 24px;
     }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+    .app-header {
+      position: relative;
+      min-height: 220px;
       margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0d0f13;
+    }
+    .app-header img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .app-header::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(9, 11, 15, 0.18), rgba(9, 11, 15, 0.18) 48%, rgba(9, 11, 15, 0.82)),
+        linear-gradient(0deg, rgba(9, 11, 15, 0.74), rgba(9, 11, 15, 0.05) 62%);
+    }
+    .header-copy {
+      position: relative;
+      z-index: 1;
+      width: min(480px, 100%);
+      margin-left: auto;
+      padding: 34px;
+      text-align: right;
     }
     h1, h2, h3, p { margin-top: 0; }
     h1 {
@@ -636,7 +681,13 @@ INDEX_HTML = """<!doctype html>
     }
     @media (max-width: 820px) {
       .shell { padding: 16px; }
-      header { display: block; }
+      .app-header { min-height: 260px; }
+      .app-header img { object-position: 38% center; }
+      .header-copy {
+        margin-left: 0;
+        padding: 24px;
+        text-align: left;
+      }
       .grid, .voters, .setup-form, .movie-form { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr; }
       table { font-size: 14px; }
@@ -646,8 +697,9 @@ INDEX_HTML = """<!doctype html>
 </head>
 <body>
   <div class="shell">
-    <header>
-      <div>
+    <header class="app-header">
+      <img src="assets/movie-night-header.png" alt="">
+      <div class="header-copy">
         <h1>Movie Night</h1>
         <p class="subtitle">Pick a movie, collect two votes, keep the list moving.</p>
       </div>

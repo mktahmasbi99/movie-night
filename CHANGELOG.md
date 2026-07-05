@@ -5,6 +5,7 @@ All notable changes to Movie Night will be documented in this file.
 ## Unreleased
 
 ### Added
+- Added generated cinema-themed header artwork to the browser UI.
 - Added confirmed edit and delete controls plus a simpler unconfirmed add flow for movie entries in the browser movie list.
 - Added a Rewatch-Worthy movie-list column and filter with status-style Yes/No badges and blank display for unset values.
 - Fixed browser API calls so the app works correctly behind code-server proxy URLs.
