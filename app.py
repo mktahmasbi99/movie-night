@@ -25,7 +25,7 @@ def row_to_movie(row):
         "director": row["director"],
         "status": row["status"],
         "statusLabel": STATUS_LABELS[row["status"]],
-        "rewatchWorthy": bool(row["rewatch_worthy"]),
+        "rewatchWorthy": row["rewatch_worthy"],
     }
 
 
@@ -378,6 +378,8 @@ INDEX_HTML = """<!doctype html>
     .status.Watched { color: var(--green); }
     .status.Skipped { color: var(--red); }
     .status.Unwatched { color: var(--blue); }
+    .status.Yes { color: var(--green); }
+    .status.No { color: var(--red); }
     .voters {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -565,6 +567,12 @@ INDEX_HTML = """<!doctype html>
       return `<span class="status ${movie.statusLabel}">${movie.statusLabel}</span>`;
     }
 
+    function rewatchBadge(movie) {
+      if (movie.rewatchWorthy === null) return "";
+      const label = movie.rewatchWorthy === 1 ? "Yes" : "No";
+      return `<span class="status ${label}">${label}</span>`;
+    }
+
     function renderState() {
       const { counts, voters, currentPick, votes, hasDatabase, needsVoters } = app.state;
       $("#unwatchedCount").textContent = counts.unwatched;
@@ -615,12 +623,12 @@ INDEX_HTML = """<!doctype html>
     }
 
     async function loadState() {
-      app.state = await api("/api/state");
+      app.state = await api("api/state");
       renderState();
     }
 
     async function loadMovies() {
-      const data = await api(`/api/movies?status=${encodeURIComponent(app.movieFilter)}`);
+      const data = await api(`api/movies?status=${encodeURIComponent(app.movieFilter)}`);
       if (!data.movies.length) {
         $("#movieTable").innerHTML = `<p class="empty">No movies found.</p>`;
         return;
@@ -630,13 +638,14 @@ INDEX_HTML = """<!doctype html>
           <td>${escapeHtml(movie.title)}</td>
           <td>${movie.year}</td>
           <td>${escapeHtml(movie.director || "")}</td>
+          <td>${rewatchBadge(movie)}</td>
           <td>${statusBadge(movie)}</td>
         </tr>
       `).join("");
       $("#movieTable").innerHTML = `
         <table>
           <thead>
-            <tr><th>Title</th><th>Year</th><th>Director</th><th>Status</th></tr>
+            <tr><th>Title</th><th>Year</th><th>Director</th><th>Rewatch</th><th>Status</th></tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
@@ -665,7 +674,7 @@ INDEX_HTML = """<!doctype html>
 
       if (event.target.id === "pickButton") {
         try {
-          const data = await api("/api/pick", { method: "POST" });
+          const data = await api("api/pick", { method: "POST" });
           await loadState();
           await loadMovies();
           setMessage("#tonightMessage", data.movie ? "Movie picked." : "You've cleared all the movies.");
@@ -676,7 +685,7 @@ INDEX_HTML = """<!doctype html>
 
       if (event.target.id === "setupDatabaseButton") {
         try {
-          const data = await api("/api/setup-database", { method: "POST" });
+          const data = await api("api/setup-database", { method: "POST" });
           await loadState();
           await loadMovies();
           setMessage("#setupMessage", data.message);
@@ -692,7 +701,7 @@ INDEX_HTML = """<!doctype html>
             voter: voteButton.dataset.voter,
             vote: voteButton.dataset.vote === "yes",
           };
-          const data = await api("/api/vote", {
+          const data = await api("api/vote", {
             method: "POST",
             body: JSON.stringify(payload),
           });
@@ -716,7 +725,7 @@ INDEX_HTML = """<!doctype html>
       event.preventDefault();
       try {
         const voters = [$("#voterOne").value, $("#voterTwo").value];
-        await api("/api/voters", {
+        await api("api/voters", {
           method: "POST",
           body: JSON.stringify({ voters }),
         });

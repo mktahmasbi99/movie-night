@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import movie_night
+import app
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
@@ -142,11 +143,15 @@ class SeedDatabaseTests(unittest.TestCase):
                 columns = {
                     row[1] for row in connection.execute("PRAGMA table_info(films)")
                 }
+                rewatch_count = connection.execute(
+                    "SELECT COUNT(*) FROM films WHERE rewatch_worthy IS NULL"
+                ).fetchone()[0]
             finally:
                 connection.close()
 
         self.assertEqual(365, movie_count)
         self.assertEqual(movie_count, stored_count)
+        self.assertEqual(movie_count, rewatch_count)
         self.assertIn("director", columns)
         self.assertIn("rewatch_worthy", columns)
 
@@ -208,6 +213,33 @@ class SeedDatabaseTests(unittest.TestCase):
         self.assertEqual(movie_night.STATUS_WATCHED, status)
 
 
+class WebApiSerializationTests(unittest.TestCase):
+    def test_rewatch_worthy_preserves_three_states(self):
+        connection = sqlite3.connect(":memory:")
+        connection.row_factory = sqlite3.Row
+        try:
+            movie_night.ensure_films_table(connection)
+            connection.executemany(
+                """
+                INSERT INTO films (id, title, year, status, rewatch_worthy)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    (1, "Unknown", 2024, movie_night.STATUS_UNWATCHED, None),
+                    (2, "No", 2024, movie_night.STATUS_UNWATCHED, 0),
+                    (3, "Yes", 2024, movie_night.STATUS_UNWATCHED, 1),
+                ),
+            )
+            movies = app.list_movies(connection)
+        finally:
+            connection.close()
+
+        values = {movie["title"]: movie["rewatchWorthy"] for movie in movies}
+        self.assertIsNone(values["Unknown"])
+        self.assertEqual(0, values["No"])
+        self.assertEqual(1, values["Yes"])
+
+
 class DatabaseConstraintTests(unittest.TestCase):
     def setUp(self):
         self.temporary_directory = tempfile.TemporaryDirectory()
@@ -239,6 +271,13 @@ class DatabaseConstraintTests(unittest.TestCase):
             "SELECT status, rewatch_worthy FROM films WHERE id = 1"
         ).fetchone()
         self.assertEqual((2, 1), values)
+
+    def test_null_rewatch_value_is_accepted(self):
+        self.connection.execute("UPDATE films SET rewatch_worthy = NULL WHERE id = 1")
+        value = self.connection.execute(
+            "SELECT rewatch_worthy FROM films WHERE id = 1"
+        ).fetchone()[0]
+        self.assertIsNone(value)
 
 
 class CommandLineTests(unittest.TestCase):

@@ -40,7 +40,8 @@ def ensure_films_table(conn):
             year INTEGER NOT NULL,
             status INTEGER NOT NULL DEFAULT 0 CHECK (status IN (0, 1, 2)),
             director TEXT,
-            rewatch_worthy INTEGER NOT NULL DEFAULT 0 CHECK (rewatch_worthy IN (0, 1))
+            rewatch_worthy INTEGER DEFAULT NULL
+                CHECK (rewatch_worthy IN (0, 1) OR rewatch_worthy IS NULL)
         );
         """
     )
@@ -104,7 +105,7 @@ def create_database_from_csv(db_path=DEFAULT_DB_PATH, seed_path=DEFAULT_SEED_PAT
                 VALUES (?, ?, ?, ?, ?, ?);
                 """,
                 [
-                    (movie_id, title, year, director, STATUS_UNWATCHED, 0)
+                    (movie_id, title, year, director, STATUS_UNWATCHED, None)
                     for movie_id, title, year, director in movies
                 ],
             )
