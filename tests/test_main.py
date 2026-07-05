@@ -171,6 +171,42 @@ class SeedDatabaseTests(unittest.TestCase):
         self.assertEqual(1, result)
         self.assertIn("Database setup skipped", output.getvalue())
 
+    def test_existing_database_is_used_without_seed_or_schema_changes(self):
+        connection = sqlite3.connect(":memory:")
+        try:
+            connection.execute(
+                """
+                CREATE TABLE films (
+                    id INTEGER PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    year INTEGER NOT NULL,
+                    status INTEGER NOT NULL DEFAULT 0
+                );
+                """
+            )
+            connection.execute(
+                """
+                INSERT INTO films (id, title, year, status)
+                VALUES (1, 'Trip to the Moon', 1902, ?)
+                """,
+                (movie_night.STATUS_WATCHED,),
+            )
+            connection.commit()
+
+            self.assertTrue(movie_night.ensure_database_ready(connection))
+
+            columns = {
+                row[1] for row in connection.execute("PRAGMA table_info(films)")
+            }
+            status = connection.execute(
+                "SELECT status FROM films WHERE id = 1"
+            ).fetchone()[0]
+        finally:
+            connection.close()
+
+        self.assertEqual({"id", "title", "year", "status"}, columns)
+        self.assertEqual(movie_night.STATUS_WATCHED, status)
+
 
 class DatabaseConstraintTests(unittest.TestCase):
     def setUp(self):
