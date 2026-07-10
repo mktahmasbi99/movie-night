@@ -460,18 +460,15 @@ INDEX_HTML = """<!doctype html>
     .shell {
       max-width: 1160px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 20px 24px 24px;
     }
-    .app-header {
+    .app-hero {
       position: relative;
-      min-height: 220px;
-      margin-bottom: 18px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
+      height: clamp(320px, 42vw, 520px);
       overflow: hidden;
       background: #0d0f13;
     }
-    .app-header img {
+    .app-hero img {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -479,20 +476,28 @@ INDEX_HTML = """<!doctype html>
       object-fit: cover;
       object-position: center;
     }
-    .app-header::after {
+    .app-hero::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(90deg, rgba(9, 11, 15, 0.18), rgba(9, 11, 15, 0.18) 48%, rgba(9, 11, 15, 0.82)),
-        linear-gradient(0deg, rgba(9, 11, 15, 0.74), rgba(9, 11, 15, 0.05) 62%);
+        linear-gradient(90deg, rgba(9, 11, 15, 0.1), rgba(9, 11, 15, 0.12) 48%, rgba(9, 11, 15, 0.78)),
+        linear-gradient(0deg, rgba(9, 11, 15, 0.82), rgba(9, 11, 15, 0.1) 56%);
     }
-    .header-copy {
+    .hero-inner {
       position: relative;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 28px 24px 18px;
+    }
+    .header-copy {
       width: min(480px, 100%);
       margin-left: auto;
-      padding: 34px;
       text-align: right;
     }
     h1, h2, h3, p { margin-top: 0; }
@@ -507,21 +512,27 @@ INDEX_HTML = """<!doctype html>
     .tabs {
       display: flex;
       gap: 8px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 20px;
+      width: fit-content;
+      max-width: 100%;
+      border: 1px solid rgba(245, 240, 232, 0.18);
+      border-radius: 8px;
+      background: rgba(12, 15, 20, 0.48);
+      backdrop-filter: blur(8px);
+      margin-bottom: 0;
+      padding: 6px;
       overflow-x: auto;
     }
     .tab {
       border: 0;
-      border-bottom: 3px solid transparent;
-      border-radius: 0;
+      border-radius: 6px;
       background: transparent;
       color: var(--muted);
       min-width: 110px;
     }
     .tab.active {
       color: var(--text);
-      border-bottom-color: var(--accent);
+      background: rgba(216, 168, 78, 0.22);
+      box-shadow: inset 0 0 0 1px rgba(216, 168, 78, 0.34);
     }
     .view { display: none; }
     .view.active { display: block; }
@@ -681,13 +692,15 @@ INDEX_HTML = """<!doctype html>
     }
     @media (max-width: 820px) {
       .shell { padding: 16px; }
-      .app-header { min-height: 260px; }
-      .app-header img { object-position: 38% center; }
+      .app-hero { height: 360px; }
+      .app-hero img { object-position: 38% center; }
+      .hero-inner { padding: 22px 16px 14px; }
       .header-copy {
         margin-left: 0;
-        padding: 24px;
         text-align: left;
       }
+      .tabs { width: 100%; }
+      .tab { min-width: 96px; }
       .grid, .voters, .setup-form, .movie-form { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr; }
       table { font-size: 14px; }
@@ -696,21 +709,22 @@ INDEX_HTML = """<!doctype html>
   </style>
 </head>
 <body>
-  <div class="shell">
-    <header class="app-header">
-      <img src="assets/movie-night-header.png" alt="">
+  <header class="app-hero">
+    <img src="assets/movie-night-header.png" alt="">
+    <div class="hero-inner">
       <div class="header-copy">
         <h1>Movie Night</h1>
         <p class="subtitle">Pick a movie, collect two votes, keep the list moving.</p>
       </div>
-    </header>
+      <nav class="tabs" aria-label="Main views">
+        <button class="tab active" data-view="tonight">Tonight</button>
+        <button class="tab" data-view="movies">Movies</button>
+        <button class="tab" data-view="setup">Setup</button>
+      </nav>
+    </div>
+  </header>
 
-    <nav class="tabs" aria-label="Main views">
-      <button class="tab active" data-view="tonight">Tonight</button>
-      <button class="tab" data-view="movies">Movies</button>
-      <button class="tab" data-view="setup">Setup</button>
-    </nav>
-
+  <div class="shell">
     <main>
       <section class="view active" id="tonight">
         <div class="grid">
