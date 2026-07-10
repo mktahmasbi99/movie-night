@@ -91,7 +91,7 @@ def list_movies(conn, status_filter="all"):
             """
             SELECT *
             FROM films
-            ORDER BY status, year, title;
+            ORDER BY year, title;
             """
         ).fetchall()
     return [row_to_movie(row) for row in rows]

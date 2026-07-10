@@ -261,6 +261,31 @@ class WebApiSerializationTests(unittest.TestCase):
 
         self.assertEqual(["Yes"], [movie["title"] for movie in movies])
 
+    def test_movie_list_is_sorted_oldest_to_newest(self):
+        connection = sqlite3.connect(":memory:")
+        connection.row_factory = sqlite3.Row
+        try:
+            movie_night.ensure_films_table(connection)
+            connection.executemany(
+                """
+                INSERT INTO films (id, title, year, status, rewatch_worthy)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    (1, "Newest Watched", 2024, movie_night.STATUS_WATCHED, None),
+                    (2, "Oldest Skipped", 1940, movie_night.STATUS_SKIPPED, None),
+                    (3, "Middle Unwatched", 1980, movie_night.STATUS_UNWATCHED, None),
+                ),
+            )
+            movies = app.list_movies(connection)
+        finally:
+            connection.close()
+
+        self.assertEqual(
+            ["Oldest Skipped", "Middle Unwatched", "Newest Watched"],
+            [movie["title"] for movie in movies],
+        )
+
 
 class MovieManagementTests(unittest.TestCase):
     def setUp(self):

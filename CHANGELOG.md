@@ -17,6 +17,7 @@ All notable changes to Movie Night will be documented in this file.
 - Added a local `AGENTS.md` context file for future assistant sessions.
 
 ### Changed
+- Sorted the browser Movies view by year from oldest to newest across filters.
 - Reworked the browser UI header into a full-width hero image with translucent tabs integrated at the bottom.
 - Reworked README to present Movie Night as a browser-based app while keeping terminal commands documented as a secondary interface.
 - Moved Pick Movie into the Tonight tab so it only appears with the voting workflow.
